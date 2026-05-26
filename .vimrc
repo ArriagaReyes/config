@@ -1,15 +1,15 @@
 " An example for a vimrc file.
 "
-" Maintainer:	The Vim Project <https://github.com/vim/vim>
-" Last Change:	2023 Aug 10
-" Former Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Maintainer:   The Vim Project <https://github.com/vim/vim>
+" Last Change:  2023 Aug 10
+" Former Maintainer:    Bram Moolenaar <Bram@vim.org>
 "
 " To use it, copy it to
-"	       for Unix:  ~/.vimrc
-"	      for Amiga:  s:.vimrc
-"	 for MS-Windows:  $VIM\_vimrc
-"	      for Haiku:  ~/config/settings/vim/vimrc
-"	    for OpenVMS:  sys$login:.vimrc
+"              for Unix:  ~/.vimrc
+"             for Amiga:  s:.vimrc
+"        for MS-Windows:  $VIM\_vimrc
+"             for Haiku:  ~/config/settings/vim/vimrc
+"           for OpenVMS:  sys$login:.vimrc
 
 " When started as "evim", evim.vim will already have done these settings, bail
 " out.
@@ -21,11 +21,11 @@ endif
 source $VIMRUNTIME/defaults.vim
 
 if has("vms")
-  set nobackup		" do not keep a backup file, use versions instead
+  set nobackup          " do not keep a backup file, use versions instead
 else
-  set backup		" keep a backup file (restore to previous version)
+  set backup            " keep a backup file (restore to previous version)
   if has('persistent_undo')
-    set undofile	" keep an undo file (undo changes after closing)
+    set undofile        " keep an undo file (undo changes after closing)
   endif
 endif
 
@@ -47,17 +47,21 @@ set tabstop=4
 set softtabstop=0 noexpandtab
 set shiftwidth=4
 
-" Syntax highlighting 
+" Syntax highlighting
 syntax on
 
+" Set numbers
+set number
+
 set nocompatible
+set linebreak
 filetype plugin on
 
 " Change direction keybindings
-nmap i <Up>
-nmap k <Down>
-nmap j <Left>
-nmap l <Right>
+" nmap i <Up>
+" nmap k <Down>
+" nmap j <Left>
+" nmap l <Right>
 
 " Add optional packages.
 "
@@ -68,6 +72,35 @@ nmap l <Right>
 if has('syntax') && has('eval')
   packadd! matchit
 endif
+
+" Word Wrap Toggle
+let s:wrapenabled = 0
+function! ToggleWrap()
+  set wrap nolist
+  if s:wrapenabled
+    set nolinebreak
+    unmap j
+    unmap k
+    unmap 0
+    unmap ^
+    unmap $
+    let s:wrapenabled = 0
+  else
+    set linebreak
+    nnoremap j gj
+    nnoremap k gk
+    nnoremap 0 g0
+    nnoremap ^ g^
+    nnoremap $ g$
+    vnoremap j gj
+    vnoremap k gk
+    vnoremap 0 g0
+    vnoremap ^ g^
+    vnoremap $ g$
+    let s:wrapenabled = 1
+  endif
+endfunction
+map <leader>w :call ToggleWrap()<CR>
 
 " Install vim-plug if not found
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -83,7 +116,11 @@ autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 " Plugins
 call plug#begin('~/.vim/plugged')
   Plug 'vimwiki/vimwiki'
+  Plug 'junegunn/goyo.vim'
+  Plug 'junegunn/limelight.vim'
   Plug 'michal-h21/vimwiki-sync'
+  Plug 'https://github.com/preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+  Plug 'maxboisvert/vim-simple-complete'
 call plug#end()
 
 " VimWiki Config
@@ -92,3 +129,8 @@ let g:vimwiki_list = [{
   \ 'syntax': 'markdown',
   \ 'ext': '.md',
   \ }]
+
+" Limelight Config
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'DarkGrey'
+let g:limelight_conceal_ctermfg = 8
